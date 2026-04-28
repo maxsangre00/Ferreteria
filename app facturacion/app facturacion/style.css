@@ -1,0 +1,479 @@
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f172a;
+    color:white;
+}
+/* HEADER */
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content: space-between; /*  clave real */
+    padding:15px 20px;
+    background:#020617;
+    border-bottom:1px solid #0ea5e9;
+    width:100%;
+}
+.app{
+    min-height: 100vh;
+    width: 100%;
+    background-image: url("imagenes/fondo1.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.logo{
+    font-weight:bold;
+    color:#0ea5e9;
+}
+
+.menu-btn{
+    font-size: 26px;
+    cursor: pointer;
+    color: #0ea5e9;
+    transition: 0.2s;
+    position: relative;
+        left: -25px;   /* 👈 lo mueve un poco a la izquierda */
+    z-index: 1001; /* arriba del header */
+}
+.menu-btn.hidden{
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* MENU DERECHO */
+.side-menu{
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    width: 220px;
+    height: 100%;
+
+    background: #274895;
+
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+
+    box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.side-menu.open{
+    transform: translateX(0);
+}
+
+.side-menu button{
+    margin: 5px 0;
+    width: 100%;
+    padding: 10px;
+ margin-bottom: 5px;
+    background: linear-gradient(145deg,#0ea5e9,#1e40af);
+    border: none;
+    border-radius: 8px;
+
+    color: white;
+    font-weight: bold;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+    
+}
+
+.side-menu button:active{
+    transform: scale(0.95);
+}
+.overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.2s;
+    z-index: 998;
+}
+
+.overlay.active{
+    opacity: 1;
+    visibility: visible;
+}
+/* BOTONES PRINCIPALES */
+.grid-botones{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr); /*  3 por fila */
+    gap:12px;
+    padding:12px;
+}
+
+.btn-pro{
+     height: 90px;
+    background:linear-gradient(145deg,#0ea5e9,#1e40af);
+    border:none;
+    border-radius:18px;
+    color:white;
+    box-shadow:0 0 12px #0ea5e9;
+
+    height:90px;
+
+    display:flex;
+    flex-direction:column;   /*  clave: vertical */
+    align-items:center;      /* centra horizontal */
+    justify-content:center;  /* centra vertical */
+
+    text-align:center;       /*  centra el texto */
+    gap:2px;                 /* espacio entre icono y texto */
+  line-height:1.1;   /*  controla altura del texto */
+    font-size:12px;
+    font-weight:bold;
+}
+
+/* ICONO */
+.btn-pro span{
+     padding:8px;
+    font-size:22px;
+    margin-bottom:10px;
+     display:block;
+  
+}
+
+/* CARDS */
+.card{
+    background:#020617;
+    padding:10px;
+    border-radius:10px;
+    margin:10px;
+}
+
+/* INPUT */
+input{
+    width: 90%;        /*  más corto */
+    max-width: 350px;  /*  límite */
+    padding: 10px;
+    margin: 6px auto;  /*  centrado */
+    display: block;
+
+    border-radius: 10px;
+    border: none;
+}
+.card{
+    display: flex;
+    flex-direction: column;
+    align-items: center; /*  centra todo */
+}
+
+/* BOTONES */
+.btn-main{
+    background:#22c55e;
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    color:white;
+}
+
+/* TOTAL */
+.totals{
+    padding:10px;
+    font-size:20px;
+    text-align:center;
+}
+.close-menu{
+    margin-bottom: 25px;  /*  más separación del resto */
+    font-size: 18px;
+    cursor: pointer;
+    color: #0ea5e9;
+
+    padding: 8px 0;
+}
+
+.btn-volver{
+       margin-bottom: 30px;  /*  más separación del resto */
+    font-size: 14px;
+    cursor: pointer;
+    color: #0ea5e9;
+
+    padding: 8px 0;
+}
+
+.btn-pro{
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.btn-pro:active{
+    transform: scale(0.88);
+    box-shadow: 0 0 5px #0ea5e9;
+}
+body{
+    transition: opacity 0.2s ease;
+}
+
+.autocomplete-container {
+    position: relative;
+}
+
+
+
+
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+h1 { font-size: 1.3rem; margin: 0; }
+
+.card { background: var(--card-bg); padding: 10px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 8px; }
+
+input { width: 100%; padding: 10px; margin: 4px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+
+.barcode-wrapper { display: flex; gap: 8px; margin-bottom: 5px; }
+#barcode-input { border: 2px solid var(--primary); background: #fdfdfd; flex-grow: 1; }
+
+.btn-scan { background: #f3f4f6; border: 1px solid #ddd; border-radius: 8px; padding: 0 10px; cursor: pointer; }
+
+/* Items de la lista */
+.item { display: flex; flex-direction: column; padding: 8px 0; border-bottom: 1px solid #f0f0f0; gap: 4px; }
+.item-name { font-weight: bold; font-size: 0.95rem; line-height: 1.2; }
+.item-bottom { display: flex; justify-content: space-between; align-items: center; }
+.item-controls { display: flex; align-items: center; gap: 10px; }
+.item-qty { width: 50px !important; height: 28px; text-align: center; border: 1px solid #ccc; border-radius: 6px; }
+.item-subtotal { font-weight: 700; color: var(--primary); }
+
+.btn-del { width: 26px; height: 26px; background: #fee2e2; color: var(--danger); border: none; border-radius: 50%; cursor: pointer; font-weight: bold; }
+
+/* Controles Cámara */
+.scan-controls { display: flex; gap: 10px; margin-top: 10px; }
+.btn-flash { background: #fbbf24; border: none; border-radius: 8px; padding: 10px 15px; font-size: 1.2rem; cursor: pointer; }
+
+/* Totales */
+.totals { border-top: 1px dashed #ccc; padding-top: 10px; }
+.total-row { font-size: 1.2rem; font-weight: bold; color: var(--primary); margin: 5px 0; }
+.btn-main { width: 100%; background: var(--primary); color: white; padding: 12px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+
+.ticket {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 10px;
+
+    background: rgba(0,0,0,0.6);
+
+    z-index: 9999;
+}
+
+.factura {
+    position: relative; /* para que funcione la X */
+
+    background: white;
+    width: 95%;
+    max-width: 420px;   /*  tamaño real celular */
+
+    border-radius: 12px;
+    padding: 15px;
+
+    font-size: 12px;
+
+    max-height: 90vh;
+    overflow-y: auto;
+
+    box-sizing: border-box;
+}
+
+.btn-cerrar{
+    position: absolute;
+    top: 8px;
+    right: 8px;
+
+    background: red;
+    color: white;
+
+    border: none;
+    border-radius: 50%;
+
+    width: 28px;
+    height: 28px;
+
+    font-size: 14px;
+    cursor: pointer;
+
+    z-index: 10000;
+}
+
+.header{
+    display: flex;
+    align-items: center;
+    gap: 10px;        /* menos espacio entre elementos */
+    padding: 6px 10px; /* achica el alto */
+    font-size: 14px;   /* texto más chico */
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    gap: 28px; /*  cerca del logo */
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.logo span{
+  margin-top: 10px; /*  lo baja suavemente */
+    color:#0ea5e9;
+} 
+.logo-img{
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    margin-top: 2px; /* ayuda a ajustar vertical */
+}
+
+.ticket-logo img{
+    width: 80px !important;
+    height: 80px !important;
+    object-fit: contain;
+}
+.empresa h2{
+    margin: 0;
+    color: #d35400;
+}
+
+.info{
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+}
+
+.tabla{
+    width: 100%;
+     table-layout: fixed;
+    border-collapse: collapse;
+      font-size: 11px;
+    margin-top: 10px;
+}
+.tabla {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.tabla td, .tabla th {
+    word-break: break-word;
+    font-size: 11px;
+}
+
+.tabla th{
+    background: #d35400;
+    color: white;
+    padding: 5px;
+    word-break: break-word;
+}
+
+.tabla td{
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+     word-wrap: break-word;
+     word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.tabla tr {
+     word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    page-break-inside: avoid;
+}
+
+.total{
+    text-align: right;
+    font-size: 20px;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.acciones {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding-top: 10px;
+    margin-top: 20px;
+}
+
+.acciones button{
+    padding: 10px 20px;
+     margin-right: 10px;
+    background: #d35400;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.acciones button:last-child {
+    margin-left: 1px; /*  separa WhatsApp */
+}
+.acciones button:nth-child(3) {
+    margin-top: 10px;   /*  baja solo WhatsApp */
+}
+@media print {
+    .acciones,
+    .btn-cerrar {
+        display: none !important;
+    }
+}
+@media print {
+    .ticket {
+        position: static !important;
+        overflow: visible !important;
+        height: auto !important;
+    }
+     .ticket-logo {
+        width: 10px !important;
+        height: 10px !important;
+        object-fit: contain;
+    }
+
+    .factura {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
+@media print {
+    body {
+        margin: 0;
+    }
+
+    body > *:not(.ticket) {
+        display: none !important;
+    }
+
+    .ticket {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+}
+@media print {
+
+    .ticket .header{
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start; /* logo queda a la izquierda */
+        gap: 10px;
+    }
+
+    .ticket .logo{
+        margin: 0;
+    }
+
+    .ticket .empresa{
+        flex: 1;              /* ocupa el espacio restante */
+        text-align: center;   /*  centra los datos */
+    }
+}
+

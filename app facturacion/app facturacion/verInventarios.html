@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ver Inventarios</title>
+
+<style>
+body{
+    font-family:'Segoe UI';
+    background:#4e67a1;
+    color:white;
+    margin:0;
+}
+
+/* HEADER */
+.header{
+    text-align:center;
+    padding:12px;
+    font-size:18px;
+    font-weight:bold;
+    background:#020617;
+    border-bottom:1px solid #1e293b;
+}
+
+/* CONTENEDOR */
+.container{
+    padding:10px;
+}
+
+/* FILTROS */
+.filtros{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-bottom:15px;
+}
+
+input{
+    display: block;
+    margin: 1px auto;   /* centra el input */
+    width: 70%;
+
+    height: 30px;        /* altura real (no 5px) */
+    padding: 0 10px;
+
+    border-radius:10px;
+    border:none;
+
+    text-align: center;  /* centra el texto */
+}
+
+/* BOTON */
+button{
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#22c55e;
+    color:white;
+    font-weight:bold;
+ line-height: 5px; /* más chico = sube el texto */}
+
+/* CARD INVENTARIO */
+.card{
+    background:#020617;
+    border-radius:12px;
+    padding:10px;
+    margin-bottom:10px;
+    border:1px solid #1e293b;
+}
+
+.card b{
+    font-size:15px;
+}
+
+/* DETALLE */
+.detalle{
+    font-size:13px;
+    margin-top:5px;
+    opacity:0.8;
+}
+
+/* HOVER */
+.card:hover{
+    background:#020617;
+    border:1px solid #22c55e;
+}
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+    z-index:9999;
+}
+
+.modal-content{
+    background:#020617;
+    margin:10% auto;
+    padding:15px;
+    width:90%;
+    max-width:500px;
+    border-radius:12px;
+    border:1px solid #22c55e;
+    box-shadow:0 0 20px #22c55e;
+    max-height:70%;
+    overflow-y:auto;
+}
+
+.cerrar{
+    float:right;
+    cursor:pointer;
+    font-size:18px;
+}
+.logo9{
+    display: flex;
+    align-items: flex-start; /* lo sube hacia arriba */
+    gap: 45px; /* separa logo y texto */
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.logo9 span{
+    position: relative;
+    top: 20px; /* lo sube un poco */
+} 
+.logo9-img{
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-top: 2px; /* ayuda a ajustar vertical */
+}
+.menu-btn{
+      color: #09202e; /* aquí elegís el color */
+    font-size:22px;
+    cursor:pointer;
+}
+
+/* MENU DERECHO */
+.side-menu{
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    width: 140px;        /* más chico */
+    max-width: 50%;      /* en celulares no ocupa tanto */
+    height: 90%;
+
+    background: #274895;
+
+    transform: translateX(100%); /* oculto */
+    transition: transform 0.25s ease;
+
+    box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.side-menu.open{
+    right: 0;
+       transform: translateX(0);
+}
+
+.side-menu button{
+    margin: 5px 0;
+    width: 100%;
+    padding: 10px;
+ margin-bottom: 5px;
+    background: linear-gradient(145deg,#0ea5e9,#1e40af);
+    border: none;
+    border-radius: 8px;
+
+    color: white;
+    font-weight: bold;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+.side-menu.active{
+    left: 0;
+}
+.side-menu button:active{
+    transform: scale(0.95);
+}
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 15px;
+    position:relative;
+}
+</style>
+</head>
+
+<body>
+
+    <header class="topbar">
+    <div class="logo9">
+        <img src="imagenes/fondo3.png" alt="Logo Ferreteria Mono" class="logo9-img">
+         <span>Ferreteria La Candelaria</span>
+    </div>
+
+    <div class="menu-btn" onclick="toggleMenu(event)">☰</div>
+</header>
+
+<!-- MENU -->
+<div class="side-menu" id="menu">
+    <button onclick="irAFacturar()">Facturar</button>
+  <button onclick="irAVentas()">Ventas</button>
+   <button onclick="irAStock()">Stock</button>
+  <button onclick="irAEstadisticas()">Estadística</button>
+    <button onclick="irAPedidos()">Pedidos</button>
+<button class="solo-admin" onclick="irAUsuarios()">Lista de Usuarios</button>
+<button class="solo-admin" onclick="irACrearUsuario()">Crear Usuario</button>
+<button onclick="irAInventario()">Inventario</button>
+<button onclick="irATicket()">Ticket Imp</button>
+
+<button class="btn-volver" onclick="volverInicio()">← Inicio</button>
+
+  
+</div>
+
+<div class="header">📊 HISTORIAL DE INVENTARIOS</div>
+
+<div class="container">
+
+<div class="filtros">
+    <input type="text" id="empleado" placeholder="Buscar por empleado">
+    <input type="date" id="desde">
+    <input type="date" id="hasta">
+    <button onclick="buscar()">🔍 Buscar</button>
+</div>
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="cerrar" onclick="cerrarModal()">✖</span>
+        <h3>📦 Detalle de Inventario</h3>
+        <div id="detalle"></div>
+    </div>
+</div>
+<div id="lista"></div>
+
+</div>
+
+<script src="verInventarios.js"></script>
+</body>
+</html>

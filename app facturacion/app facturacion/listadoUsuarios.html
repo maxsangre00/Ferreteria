@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usuarios</title>
+
+<style>
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    color:white;
+}
+
+.header{
+    text-align:center;
+    padding:15px;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.lista{
+    padding:10px;
+}
+
+.card{
+    background: rgba(255,255,255,0.08);
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:10px;
+    backdrop-filter: blur(10px);
+}
+
+.card h3{
+    margin:0;
+    font-size:16px;
+}
+
+.card p{
+    margin:4px 0;
+    font-size:13px;
+    opacity:0.8;
+}
+
+.botones{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+
+button{
+    flex:1;
+    padding:8px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.editar{
+    background:#00eaff;
+    color:black;
+}
+
+.eliminar{
+    background:#ff4b5c;
+    color:white;
+}
+.logo6{
+    display: flex;
+    align-items: flex-start; /* lo sube hacia arriba */
+    gap: 25px; /* separa logo y texto */
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.logo6 span{
+    position: relative;
+    top: 20px; /* lo sube un poco */
+} 
+.logo6-img{
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-top: 2px; /* ayuda a ajustar vertical */
+}
+.menu-btn{
+      color: #27709d; /* aquí elegís el color */
+    font-size:22px;
+    cursor:pointer;
+}
+
+/* MENU DERECHO */
+.side-menu{
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    width: 180px;
+    height: 100%;
+
+    background: #274895;
+
+    transform: translateX(100%); /* oculto a la derecha */
+    transition: transform 0.3s ease;
+
+    box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.side-menu.open{
+    transform: translateX(0); /* aparece desde la derecha */
+}
+
+.side-menu button{
+    margin: 5px 0;
+    width: 100%;
+    padding: 10px;
+ margin-bottom: 5px;
+    background: linear-gradient(145deg,#0ea5e9,#1e40af);
+    border: none;
+    border-radius: 8px;
+
+    color: white;
+    font-weight: bold;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.side-menu button:active{
+    transform: scale(0.95);
+}
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 15px;
+    position:relative;
+}
+.inactivo{
+    opacity: 0.4;
+    filter: grayscale(1);
+}
+.toast{
+    position: fixed;
+    top: 40%; /*  un poco más arriba del centro */
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    padding: 12px 22px;
+    border-radius: 10px;
+
+    font-weight: bold;
+    font-size: 14px;
+
+    color: white;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: 0.4s;
+
+    z-index: 9999;
+}
+
+/* visible */
+.toast.show{
+    opacity: 1;
+}
+
+/* verde (activar) */
+.toast.success{
+    background: rgba(34, 197, 94, 0.8); /*  verde transparente */
+}
+
+/* rojo (desactivar) */
+.toast.error{
+    background: rgba(239, 68, 68, 0.8); /*  rojo transparente */
+}
+</style>
+</head>
+
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <header class="topbar">
+    <div class="logo6">
+        <img src="imagenes/fondo3.png" alt="Logo Ferreteria Mono" class="logo6-img">
+         <span>Ferreteria La Candelaria</span>
+    </div>
+
+    <div class="menu-btn" onclick="toggleMenu(event)">☰</div>
+</header>
+
+<!-- MENU -->
+<div class="side-menu" id="menu">
+    <button onclick="irAFacturar()">Facturar</button>
+  <button onclick="irAVentas()">Ventas</button>
+   <button onclick="irAStock()">Stock</button>
+  <button onclick="irAEstadisticas()">Estadística</button>
+    <button onclick="irAPedidos()">Pedidos</button>
+<button onclick="irAInventario()">Inventario</button>
+  <button onclick="irATicket()">Ticket Imp</button>
+   <button onclick="irACrearUsuario()">Crear Usuario</button>
+    <button class="btn-volver" onclick="volverInicio()">← Volver</button>
+
+  
+</div>
+
+<div class="header">👥 Usuarios</div>
+
+<div class="lista" id="lista"></div>
+
+<script>
+    const user = JSON.parse(localStorage.getItem("usuario"));
+
+if(!user){
+    alert("Debes iniciar sesión");
+    window.location.href = "loguin.html";
+}
+function mostrarToast(mensaje, tipo){
+    const toast = document.getElementById("toast");
+
+    toast.innerText = mensaje;
+
+    toast.classList.remove("success", "error");
+    toast.classList.add("show");
+
+    if(tipo === "ok"){
+        toast.classList.add("success");
+    }else{
+        toast.classList.add("error");
+    }
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2000);
+}
+function cargarUsuarios(){
+
+    fetch("http://localhost:3000/usuarios")
+    .then(res => res.json())
+    .then(data => {
+
+        const cont = document.getElementById("lista");
+        cont.innerHTML = "";
+
+      // activos arriba, inactivos abajo
+data.sort((a, b) => {
+    if(a.estado === b.estado) return 0;
+    return a.estado === "activo" ? -1 : 1;
+});
+
+data.forEach(u => {
+
+    const esInactivo = u.estado === "inactivo";
+
+    cont.innerHTML += `
+        <div class="card ${esInactivo ? 'inactivo' : ''}">
+            <h3>${u.nombre}</h3>
+            <p>${u.email}</p>
+            <p>${u.telefono || "-"}</p>
+            <p>Rol: ${u.rol}</p>
+            <p>Estado: ${esInactivo ? '🔴 Inactivo' : '🟢 Activo'}</p>
+
+            <div class="botones">
+                ${
+                    esInactivo
+                    ? `<button onclick="activar(${u.id})">✅ Activar</button>`
+                    : `
+                        <button class="editar" onclick="editar(${u.id})">Editar</button>
+                        <button class="eliminar" onclick="eliminar(${u.id})">Desactivar</button>
+                      `
+                }
+            </div>
+        </div>
+    `;
+});
+
+    });
+}
+function activar(id){
+
+    fetch("http://localhost:3000/activar-usuario", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({id})
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if(data.ok){
+            mostrarToast("✅ Usuario activado", "ok");
+            cargarUsuarios();
+        }else{
+            mostrarToast("❌ Error al activar", "error");
+        }
+
+    });
+}
+function eliminar(id){
+
+    if(!confirm("¿Desactivar usuario?")) return;
+
+    fetch("http://localhost:3000/eliminar-usuario", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({id})
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if(data.ok){
+            mostrarToast("🚫 Usuario desactivado", "error");
+            cargarUsuarios();
+        }else{
+            mostrarToast("❌ Error", "error");
+        }
+
+    });
+
+}
+
+function editar(id){
+
+    fetch("http://localhost:3000/usuarios")
+    .then(res => res.json())
+    .then(data => {
+
+        const user = data.find(u => u.id == id);
+
+        if(user.estado === "inactivo"){
+            mostrarToast("No se puede editar un usuario inactivo", "error");
+            return;
+        }
+
+        localStorage.setItem("usuarioEditar", JSON.stringify(user));
+        localStorage.setItem("origen", "lista"); // 🔥 IMPORTANTE
+
+        window.location.href = "crearUsuario.html";
+    });
+
+}
+
+function toggleMenu(event){
+    event.stopPropagation();
+
+    const menu = document.getElementById("menu");
+menu.classList.toggle("open");}
+
+window.cerrarMenu = function(){
+    document.getElementById("menu")?.classList.remove("open");
+}
+
+window.irAFacturar = function(){
+    window.location.href = "Facturar.html";
+    }
+    window.irAVentas = function(){
+    window.location.href = "ventas.html";
+}
+window.irAStock = function(){
+    window.location.href = "stock.html";
+}
+
+window.volverInicio = function(){
+    document.body.style.opacity = "0";
+    setTimeout(() => window.location.href = "index.html", 200);
+}
+window.irAPedidos = function(){
+    window.location.href = "pedidos.html";
+}
+function irAEstadisticas() {
+    window.location.href = "estadisticas.html";
+}
+function irACrearUsuario(){
+    localStorage.setItem("origen", "index"); // 🔥 viene desde inicio
+    window.location.href = "crearUsuario.html";
+}
+function irAUsuarios(){
+    window.location.href = "listadoUsuarios.html";
+}
+window.irAInventario = function(){
+    window.location.href = "inventario.html";
+}
+window.irATicket = function(){
+    window.location.href = "ticket.html";
+}
+
+window.addEventListener("load", () => {
+
+    const user = JSON.parse(localStorage.getItem("usuario"));
+
+    if(!user){
+        window.location.href = "loguin.html";
+        return;
+    }
+
+    //  ocultar botones solo admin
+    if(user.rol !== "admin"){
+
+        document.querySelectorAll(".solo-admin").forEach(el => {
+            el.style.display = "none";
+        });
+
+    }
+
+});
+document.addEventListener("click", function(e){
+
+    const menu = document.getElementById("menu");
+    const boton = document.querySelector(".menu-btn");
+
+    // si el menú está abierto
+    if(menu.classList.contains("open")){
+
+        // si el click NO fue dentro del menú ni en el botón ☰
+        if(!menu.contains(e.target) && !boton.contains(e.target)){
+            menu.classList.remove("open");
+        }
+    }
+
+});
+
+cargarUsuarios();
+</script>
+
+</body>
+</html>

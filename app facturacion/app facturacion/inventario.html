@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventario</title>
+
+<style>
+body{
+    font-family: 'Segoe UI';
+    background:#0f172a;
+    color:white;
+    margin:0;
+}
+
+/* HEADER */
+.header{
+    text-align:center;
+    padding:12px;
+    font-size:18px;
+    font-weight:bold;
+    background:#020617;
+    border-bottom:1px solid #1e293b;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+/* CONTENEDOR */
+.container{
+    padding:10px;
+}
+
+/* FILTROS */
+.filtros{
+    display:flex;
+    flex-direction:column;
+    gap:6px; /* menos espacio entre elementos */
+    margin-bottom:8px;
+}
+
+select, input{
+    padding:6px 8px;       
+    border-radius:8px;      /* un poco más chico */
+    border:none;
+    width:70%;
+    font-size:12px;        
+    height:28px;            /* controla el alto total */
+    display:block;
+    margin: 0 auto 6px auto;
+}
+
+/* BOTONES */
+button{
+        height:28px;            /* controla el alto total */
+
+    padding:0 10px;
+    border:none;
+    border-radius:10px;
+    background:#22c55e;
+    color:white;
+    font-size:15px;
+    font-weight:bold;
+}
+
+/* LISTA */
+#lista{
+    margin-top:10px;
+}
+
+/* ITEM PRODUCTO */
+.item{
+    background:#020617;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+/* NOMBRE */
+.item b{
+    font-size:14px;
+}
+
+/* FILA */
+.row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+}
+
+/* INPUT GRANDE */
+.row input{
+    width:70px;
+      height:26px;   
+       padding:2px 4px;
+    text-align:center;
+    font-size:12px;
+    font-weight:bold;
+     
+}
+
+/* STOCK */
+.stock{
+    font-size:12px;
+    opacity:0.7;
+}
+
+/* DIFERENCIA */
+.diff{
+    font-size:13px;
+    font-weight:bold;
+}
+
+.diff-ok{color:#22c55e;}
+.diff-neg{color:#ef4444;}
+.diff-pos{color:#facc15;}
+
+/* BOTÓN GUARDAR FIJO */
+
+.logo7{
+    display: flex;
+    align-items: flex-start; /* lo sube hacia arriba */
+    gap: 35px; /* separa logo y texto */
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.logo7 span{
+    position: relative;
+    top: 10px; /* lo sube un poco */
+} 
+.logo7-img{
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    margin-top: 2px; /* ayuda a ajustar vertical */
+}
+.menu-btn{
+      color: #27709d; /* aquí elegís el color */
+    font-size:22px;
+    cursor:pointer;
+}
+
+/* MENU DERECHO */
+.side-menu{
+    position: fixed;
+    right: -250px;
+    top: 0;
+    width: 180px;
+    height: 100%;
+    background: #274895;
+    transition: right 0.25s ease;
+     transform: translateX(100%);
+        box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+        z-index: 999;
+    
+}
+
+.side-menu.open{
+    right: 0;
+       transform: translateX(0);
+}
+
+.side-menu button{
+    margin: 5px 0;
+    width: 100%;
+    padding: 10px;
+ margin-bottom: 5px;
+    background: linear-gradient(145deg,#0ea5e9,#1e40af);
+    border: none;
+    border-radius: 8px;
+
+    color: white;
+    font-weight: bold;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+.side-menu.active{
+    left: 0;
+}
+.side-menu button:active{
+    transform: scale(0.95);
+}
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 15px;
+    position:relative;
+}
+.btn-guardar,
+.btn-ver{
+    width:90%;
+    max-width:400px;
+    display:block;
+    margin:10px auto;
+}
+.btn-guardar{
+    background:#22c55e; /* verde */
+}
+
+.btn-ver{
+    background:#3b82f6; /* azul */
+}
+.toast{
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    padding: 12px 22px;
+    border-radius: 10px;
+
+    color: white;
+    font-weight: bold;
+
+    opacity: 0;
+    transition: 0.3s;
+
+    z-index: 9999;
+}
+
+.toast.show{
+    opacity: 1;
+}
+.toast.success{
+    background: rgba(34, 197, 94, 0.25);
+    backdrop-filter: blur(8px); /*  efecto vidrio */
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.toast.error{
+    background: rgba(239, 68, 68, 0.25); /* rojo transparente */
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="logo7">
+        <img src="imagenes/fondo3.png" alt="Logo Ferreteria Mono" class="logo7-img">
+         <span>Ferreteria La Candelaria</span>
+    </div>
+
+    <div class="menu-btn" onclick="toggleMenu(event)">☰</div>
+</header>
+
+<!-- MENU -->
+<div class="side-menu" id="menu">
+    <button onclick="irAFacturar()">Facturar</button>
+  <button onclick="irAVentas()">Ventas</button>
+   <button onclick="irAStock()">Stock</button>
+  <button onclick="irAEstadisticas()">Estadística</button>
+    <button onclick="irAPedidos()">Pedidos</button>
+<button class="solo-admin" onclick="irAUsuarios()">Lista de Usuarios</button>
+<button class="solo-admin" onclick="irACrearUsuario()">Crear Usuario</button>
+<button onclick="irATicket()">Ticket Imp</button>
+<button class="btn-volver" onclick="volverInicio()">← Inicio</button>
+
+  
+</div>
+
+
+<div class="header">📦 INVENTARIO</div>
+
+<div class="container">
+
+<div class="filtros">
+    <select id="proveedor"></select>
+    <select id="rubro"></select>
+    <button onclick="cargar()">Cargar Productos</button>
+</div>
+
+<div id="lista"></div>
+
+</div>
+
+<button class="btn-guardar" onclick="guardar()">💾 Guardar Inventario</button>
+<button id="btnVerInventarios" class="btn-ver" onclick="verInventarios()">
+    📊 Ver Inventarios
+</button>
+
+<script src="inventario.js"></script>
+</body>
+</html>

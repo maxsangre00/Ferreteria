@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Ticket</title>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI';
+    background: linear-gradient(135deg, #0f172a, #020617);
+    color:white;
+    text-align:center;
+}
+
+.header{
+    padding:15px;
+    font-size:20px;
+    font-weight:bold;
+    background:#020617;
+}
+
+input{
+    width:80%;
+    padding:12px;
+    margin:10px auto;
+    border-radius:10px;
+    border:none;
+    text-align:center;
+    font-size:16px;
+}
+
+button{
+    padding:12px 20px;
+    margin:5px;
+    border:none;
+    border-radius:10px;
+    background: linear-gradient(145deg,#22c55e,#16a34a);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.ticket{
+    margin:20px auto;
+    width:280px;
+    padding:15px;
+    border-radius:15px;
+    background:white;
+    color:black;
+    border:1px solid #22c55e;
+}
+
+.nombre{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.precio{
+    font-size:28px;
+}
+
+.codigo{
+    font-size:14px;
+}
+
+@media print {
+    button, input {
+        display:none;
+    }
+
+    body{
+        background:white;
+    }
+
+    .ticket{
+        border:none;
+        box-shadow:none;
+    }
+}
+.scanner-modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:black;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.scanner-box{
+    width:100%;
+    max-width:400px;
+}
+
+.scanner-top{
+    display:flex;
+    justify-content:space-between;
+    padding:10px;
+}
+
+.scanner-top button{
+    background:#020617;
+    border:1px solid #22c55e;
+    color:white;
+    border-radius:8px;
+    padding:8px 12px;
+}
+
+#reader{
+    width:100%;
+}
+#toast{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    
+    background: rgba(0,0,0,0.7);
+    color: white;
+    
+    padding: 15px 25px;
+    border-radius: 12px;
+    
+    font-size: 16px;
+    font-weight: bold;
+    
+    opacity: 0;
+    pointer-events: none;
+    
+    transition: 0.3s ease;
+    z-index: 10000;
+}
+
+#toast.show{
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.logov{ 
+    display: flex; 
+    align-items: flex-start; /* lo sube hacia arriba */
+     gap: 30px; /* separa logo y texto */
+      font-weight: bold; 
+      font-size: 16px; 
+    } 
+    .logov span{ 
+        position: relative;
+         top: 20px; /* lo sube un poco */
+         } 
+ .logov-img{
+             width: 50px;
+              height:
+               50px; 
+               object-fit: contain;
+                margin-top: 2px; /* ayuda a ajustar vertical */ 
+            } 
+.menu-btn{ color: #e8ebec; /* aquí elegís el color */
+     font-size:22px; 
+     cursor:pointer; 
+    } 
+    /* MENU DERECHO */ 
+    .side-menu{ 
+        position: fixed; 
+        top: 0; 
+        right: 0;
+         width: 180px;
+          height: 100%;
+           background: #274895; 
+           transform: translateX(100%); /* oculto a la derecha */
+            transition: transform 0.3s ease; 
+            box-shadow: -5px 0 20px rgba(0,0,0,0.5); 
+            z-index: 999; 
+        } 
+.side-menu.open{ 
+    transform: translateX(0); /* aparece desde la derecha */
+ } 
+ .side-menu button{ 
+    margin: 5px 0;
+     width: 100%; 
+     padding: 10px;
+      margin-bottom: 5px;
+       background: linear-gradient(145deg,#0ea5e9,#1e40af);
+        border: none;
+         border-radius: 8px; color: white; 
+    font-weight: bold; 
+    text-align: left;
+     cursor: pointer;
+     transition: 0.2s; 
+    } 
+.side-menu button:active{ 
+    transform: scale(0.95); 
+} 
+.topbar{
+     display:flex;
+      align-items:center; 
+      justify-content:space-between;
+       padding:10px 15px; position:relative;
+     }
+
+</style>
+</head>
+
+<body>
+<div id="toast"></div>
+
+
+<header class="topbar"> 
+    <div class="logov">
+         <img src="imagenes/fondo3.png" alt="Logo Ferreteria Mono" class="logov-img"> 
+         <span>Ferreteria La Candelaria</span> 
+        </div> 
+        <div class="menu-btn" onclick="toggleMenu(event)">☰</div>
+     </header>
+      <!-- MENU --> 
+       <div class="side-menu" id="menu">
+         <button onclick="irAFacturar()">Facturar</button>
+          <button onclick="irAVentas()">Ventas</button>
+           <button onclick="irAStock()">Stock</button> 
+           <button onclick="irAEstadisticas()">Estadística</button>
+            <button onclick="irAPedidos()">Pedidos</button> 
+            <button class="solo-admin" onclick="irAUsuarios()">Lista de Usuarios</button>
+             <button class="solo-admin" onclick="irACrearUsuario()">Crear Usuario</button>
+              <button onclick="irAInventario()">Inventario</button>
+               <button class="btn-volver" onclick="volverInicio()">← Inicio</button> 
+            </div>
+
+
+
+<div class="header">🎟 Generador de Ticket</div>
+
+<input type="text" id="codigo" placeholder="Escanear o escribir código">
+<br>
+
+<button onclick="buscar()">Buscar</button>
+<button onclick="iniciarScanner()">📷 Escanear</button>
+<button onclick="imprimirTodo()">🖨 Imprimir todos</button>
+<button onclick="limpiarTickets()">🗑 Limpiar</button>
+
+<div id="ticket"></div>
+
+
+<!-- SCANNER -->
+<div id="scannerModal" class="scanner-modal">
+    <div class="scanner-box">
+
+        <div class="scanner-top">
+            <button onclick="cerrarScanner()">❌ Cerrar</button>
+            <button onclick="toggleFlash()">🔦 Flash</button>
+        </div>
+
+        <div id="reader"></div>
+
+    </div>
+</div>
+
+<script>
+
+let scanner = null;
+let flashEncendido = false;
+
+// ================= BUSCAR =================
+async function buscar(codigoManual){
+
+    const input = document.getElementById("codigo");
+    const codigo = codigoManual || input.value;
+
+    if(!codigo){
+mostrarToast("Ingrese código");
+        return;
+    }
+
+    const res = await fetch(`http://localhost:3000/buscar-productos?q=${codigo}`);
+    const data = await res.json();
+
+    if(data.length === 0){
+mostrarToast("No encontrado");
+        input.value = "";
+        input.focus();
+        return;
+    }
+
+    generarTicket(data[0]);
+}
+
+// ================= GENERAR TICKET =================
+function generarTicket(p){
+
+    const id = "barcode_" + Date.now();
+
+    document.getElementById("ticket").innerHTML += `
+        <div class="ticket">
+            <div class="nombre">${p.nombre}</div>
+            <div class="precio">$${p.precio_venta}</div>
+            <svg id="${id}"></svg>
+            <div class="codigo">${p.codigo_barras}</div>
+        </div>
+    `;
+
+    JsBarcode("#" + id, p.codigo_barras, {
+        format: "CODE128",
+        width: 2,
+        height: 60,
+        displayValue: false
+    });
+
+    // limpiar input
+    const input = document.getElementById("codigo");
+    input.value = "";
+    input.focus();
+}
+
+// ================= IMPRIMIR =================
+function imprimirTodo(){
+    window.print();
+}
+
+// ================= LIMPIAR =================
+function limpiarTickets(){
+    document.getElementById("ticket").innerHTML = "";
+}
+
+// ================= ENTER PARA BUSCAR =================
+document.getElementById("codigo").addEventListener("keypress", function(e){
+    if(e.key === "Enter"){
+        buscar();
+    }
+});
+
+// ================= SCANNER =================
+function iniciarScanner(){
+
+    document.getElementById("scannerModal").style.display = "flex";
+
+    scanner = new Html5Qrcode("reader");
+
+    scanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        (decodedText) => {
+            cerrarScanner();
+            buscar(decodedText);
+        }
+    );
+}
+
+function cerrarScanner(){
+
+    if(scanner){
+        scanner.stop().then(()=>{
+            scanner.clear();
+            scanner = null;
+        });
+    }
+
+    document.getElementById("scannerModal").style.display = "none";
+}
+async function toggleFlash(){
+
+    if(!scanner) return;
+
+    try{
+        const track = scanner.getRunningTrack();
+
+        if(!track) return;
+
+        const capabilities = track.getCapabilities();
+
+        if(!capabilities.torch){
+mostrarToast("Sin flash disponible");
+            return;
+        }
+
+        flashEncendido = !flashEncendido;
+
+        await track.applyConstraints({
+            advanced: [{ torch: flashEncendido }]
+        });
+
+    }catch(err){
+        console.log("Error flash:", err);
+    }
+}
+function mostrarToast(mensaje, tipo="ok"){
+
+    const toast = document.getElementById("toast");
+
+    toast.innerText = mensaje;
+
+    if(tipo === "error"){
+        toast.style.background = "rgba(220,38,38,0.8)";
+    } else {
+        toast.style.background = "rgba(34,197,94,0.8)";
+    }
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2000);
+}
+
+
+function toggleMenu(event){
+    event.stopPropagation();
+
+    const menu = document.getElementById("menu");
+    menu.classList.toggle("open");
+}
+window.cerrarMenu = function(){
+    document.getElementById("menu")?.classList.remove("open");
+}
+
+window.irAFacturar = function(){
+    window.location.href = "Facturar.html";
+    }
+    window.irAVentas = function(){
+    window.location.href = "ventas.html";
+}
+window.irAStock = function(){
+    window.location.href = "stock.html";
+}
+
+window.volverInicio = function(){
+    document.body.style.opacity = "0";
+    setTimeout(() => window.location.href = "index.html", 200);
+}
+window.irAPedidos = function(){
+    window.location.href = "pedidos.html";
+}
+function irAEstadisticas() {
+    window.location.href = "estadisticas.html";
+}
+function irACrearUsuario(){
+    window.location.href = "crearUsuario.html";
+}
+function irAUsuarios(){
+    window.location.href = "listadoUsuarios.html";
+}
+function verInventarios(){
+    window.location.href = "verInventarios.html";
+}
+window.irATicket = function(){
+    window.location.href = "ticket.html";
+}
+window.irAInventario = function(){
+    window.location.href = "inventario.html";
+}
+document.addEventListener("click", function(e){
+
+    const menu = document.getElementById("menu");
+    const boton = document.querySelector(".menu-btn");
+
+    // si el menú está abierto
+    if(menu.classList.contains("open")){
+
+        // si el click NO fue dentro del menú ni en el botón
+        if(!menu.contains(e.target) && !boton.contains(e.target)){
+            menu.classList.remove("open");
+        }
+    }
+    });
+</script>
+
+</body>
+</html>

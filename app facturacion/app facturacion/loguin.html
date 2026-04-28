@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top, #0f2027, #203a43, #0f2027);
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+/* CARD */
+.login-box{
+    width:320px;
+    padding:25px;
+    border-radius:15px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 25px rgba(0,255,255,0.2);
+    text-align:center;
+}
+
+/* LOGO */
+.logo{
+    width:90px;
+    height:90px;
+    margin-bottom:15px;
+    border-radius:50%;
+    animation: flotar 3s ease-in-out infinite,
+               glow 2s infinite alternate;
+}
+
+/* flotación */
+@keyframes flotar{
+    0%{ transform: translateY(0px); }
+    50%{ transform: translateY(-10px); }
+    100%{ transform: translateY(0px); }
+}
+
+/* brillo neón */
+@keyframes glow{
+    from{
+        box-shadow: 0 0 10px #00eaff;
+    }
+    to{
+        box-shadow: 0 0 25px #00eaff, 0 0 40px #00eaff;
+    }
+}
+.logo:hover{
+    transform: scale(1.1) rotate(3deg);
+    transition:0.3s;
+}
+
+/* INPUTS */
+input{
+    width:90%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:8px;
+    background: rgba(255,255,255,0.1);
+    color:white;
+    outline:none;
+}
+
+/* BOTONES */
+button{
+    width:95%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.ingresar{
+    background:#00eaff;
+    color:black;
+}
+
+.ingresar:hover{
+    box-shadow:0 0 15px #00eaff;
+}
+
+.salir{
+    background:#ff4b5c;
+    color:white;
+}
+
+.salir:hover{
+    box-shadow:0 0 15px #ff4b5c;
+}
+
+h2{
+    margin:10px 0;
+}
+#mensaje{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.6);
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    z-index: 9999;
+    text-align: center;
+
+    opacity: 0;
+    pointer-events: none;
+    backdrop-filter: blur(10px);
+}
+
+/* POP */
+@keyframes popIn{
+    0%{
+        transform: translate(-50%, -50%) scale(0.6);
+        opacity: 0;
+    }
+    60%{
+        transform: translate(-50%, -50%) scale(1.05);
+        opacity: 1;
+    }
+    100%{
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* FADE OUT */
+@keyframes fadeOut{
+    from{ opacity:1; }
+    to{ opacity:0; }
+}
+
+/* éxito */
+.mostrar-ok{
+    background: rgba(100, 237, 173, 0.25);
+    color: #76c99e;
+    border: 1px solid rgba(100, 237, 173, 0.4);
+    animation: popIn 300ms ease forwards;
+}
+
+/* error */
+.mostrar-error{
+    background: rgba(255, 59, 59, 0.25);
+    color: #ffd0d0;
+    border: 1px solid rgba(255, 59, 59, 0.4);
+    animation: popIn 300ms ease forwards;
+}
+</style>
+</head>
+
+<body>
+<div id="mensaje"></div>
+<div class="login-box">
+
+    <img src="imagenes/fondo3.png" class="logo">
+
+    <h2>🔐 Ingreso al Sistema</h2>
+
+    <input type="text" id="usuario" placeholder="Email o Nombre">
+    <input type="password" id="password" placeholder="Password">
+
+    <button class="ingresar" onclick="login()">Ingresar</button>
+    <button class="salir" onclick="cerrar()">Cerrar</button>
+
+</div>
+
+<script>
+
+function mostrarMensaje(texto, tipo){
+
+    const msg = document.getElementById("mensaje");
+
+    msg.innerText = texto;
+
+    // reset
+    msg.className = "";
+    msg.style.opacity = "0";
+
+    void msg.offsetWidth; // reinicia animación
+
+    if(tipo === "ok"){
+        msg.classList.add("mostrar-ok");
+    }else{
+        msg.classList.add("mostrar-error");
+    }
+
+    // mostrar
+    msg.style.opacity = "1";
+
+    // ocultar correctamente
+    setTimeout(() => {
+        msg.style.animation = "fadeOut 300ms ease forwards";
+
+        setTimeout(() => {
+            msg.className = "";
+            msg.style.opacity = "0";
+        }, 300);
+
+    }, 2000);
+}
+function login(){
+
+    const usuario = document.getElementById("usuario").value;
+    const password = document.getElementById("password").value;
+
+    if(!usuario || !password){
+        mostrarMensaje("⚠️ Completa los campos", "error");
+        return;
+    }
+
+    fetch("http://localhost:3000/login", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ usuario, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if(data.ok){
+
+            mostrarMensaje("✅ Bienvenido " + data.usuario.nombre, "ok");
+
+            localStorage.setItem("usuario", JSON.stringify(data.usuario));
+
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 2000);
+
+        }else{
+            mostrarMensaje("❌ Credenciales incorrectas", "error");
+        }
+
+    })
+    .catch(err => {
+        console.error(err);
+        mostrarMensaje("⚠️ Error de conexión", "error");
+    });
+
+}
+
+function cerrar(){
+    window.close();
+}
+
+// auto login
+const user = JSON.parse(localStorage.getItem("usuario"));
+if(user){
+    window.location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>

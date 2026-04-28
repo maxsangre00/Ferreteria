@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link rel="stylesheet" href="styleventas.css">
+<link rel="stylesheet" href="style.css">
+<title>Buscar Ventas</title>
+
+</head>
+<body>
+<header class="topbar">
+    <div class="logo-menu">
+        <img src="imagenes/fondo3.png" alt="Logo Ferreteria Mono" class="logo-img">
+         <span>Ferreteria La Candelaria</span>
+    </div>
+
+    <div class="menu-btn" onclick="toggleMenu(event)">☰</div>
+</header>
+
+<!-- MENU -->
+<div class="side-menu" id="menu">
+    <button onclick="irAFacturar()">Facturar</button>
+<button onclick="irAStock()">Stock</button>   
+ <button onclick="irAPedidos()">Pedidos</button>
+<button onclick="irAEstadisticas()">Estadística</button>
+  <button class="solo-admin" onclick="irAUsuarios()">Lista de Usuarios</button>
+<button class="solo-admin" onclick="irACrearUsuario()">Crear Usuario</button>
+<button onclick="irAInventario()">Inventario</button>
+<button onclick="irATicket()">Ticket Imp</button>
+
+    <button class="btn-volver" onclick="volverInicio()">← Inicio</button>
+
+  
+</div>
+<div class="container">
+
+    <h1>🔎 Buscar Ventas</h1>
+
+  <div class="filtros">
+
+    <!-- FILA 1 -->
+    <div class="fila">
+        <input type="text" id="codigo" placeholder="Código factura">
+        <input type="text" id="cliente" placeholder="Cliente o código">
+    </div>
+
+    <!-- FILA 2 -->
+    <div class="fila">
+        <input type="date" id="desde">
+        <input type="date" id="hasta">
+    </div>
+
+    <!-- FILA 3 -->
+    <div class="fila">
+        <select id="metodo">
+            <option value="">Método pago</option>
+            <option value="Contado">Contado</option>
+            <option value="Efectivo">Efectivo</option>
+            <option value="Tarjeta">Tarjeta</option>
+        </select>
+
+        <select id="estado">
+            <option value="">Estado</option>
+            <option value="ACTIVA">ACTIVA</option>
+            <option value="ANULADA">ANULADA</option>
+        </select>
+    </div>
+
+    <!-- FILA 4 -->
+    <div class="fila">
+      <div class="fila fila-boton">
+    <button onclick="buscar()">Buscar</button>
+</div>
+    </div>
+
+</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+             
+                <th>Total</th>
+             
+              
+            </tr>
+        </thead>
+        <tbody id="tabla"></tbody>
+    </table>
+
+</div>
+
+<script>
+
+function ver(id){
+    alert("Ver factura " + id);
+}
+
+</script>
+
+<script src="sql-wasm.js"></script>
+<script src="html5-qrcode.min.js"></script>
+
+<!--  IMPORTANTE -->
+  <script src="ventas.js" defer></script>
+<script src="script.js" defer></script>
+<div class="overlay"></div>
+
+</body>
+</html>

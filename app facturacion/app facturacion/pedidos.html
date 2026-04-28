@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<title>Pedidos</title>
+
+<style>
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background:white;   /*  fondo blanco */
+    color:black;        /* texto negro */
+    font-size:14px;
+}
+
+.header{
+    padding:12px;
+    background:#f3f4f6;
+    border-bottom:1px solid #ccc;
+    color:black;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:18px;
+    font-weight:bold;
+}
+
+.container{
+    padding:10px;
+}
+input, select{
+    padding:6px 8px;
+    font-size:13px;
+    border-radius:6px;
+    border:none;
+    outline:none;
+    width:100%;
+} 
+input, select, button{
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    margin:5px;
+}
+.filters{
+    display:grid;
+    grid-template-columns: 1fr 1fr; /*  2 columnas */
+    gap:6px;
+    margin-bottom:10px;
+}
+
+button{
+    padding:6px 10px;
+    font-size:13px;
+    border:none;
+    border-radius:6px;
+    background:#2563eb;
+    color:white;
+}
+
+/* LISTA PRODUCTOS */
+.producto{
+    background:#ffffff;     /* blanco */
+    border:1px solid #ddd;  /* borde suave */
+    border-radius:8px;
+    padding:8px;
+    margin-bottom:8px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    text-align:center;
+}
+.producto .info{
+    text-align:center;
+}
+.producto b{
+    font-size:13px;
+}
+.producto .controls{
+    display:flex;
+    gap:5px;
+}
+.producto input{
+    width:60px; /*  más chico */
+    text-align:center;
+}
+.producto select{
+    font-size:12px;
+    padding:5px;
+}
+#buscar{
+    width: 190%;       /*  más corto */
+    max-width: 220px;
+    font-size: 13px;
+    padding: 6px 8px;
+}
+
+/* opcional: alinear con botón */
+.barra-busqueda{
+    display:flex;
+    gap:6px;
+    align-items:center;
+}
+
+/* PEDIDO */
+.pedido{
+    display:flex;
+    flex-direction:column;
+    align-items:center; /*  centra todo */
+}
+.pedido-item{
+    background:#f3f4f6; /* gris claro */
+    color:black;
+    padding:8px;
+    border-radius:8px;
+    margin-bottom:6px;
+    font-size:13px;
+    text-align:center;
+}
+
+/* BOTÓN ELIMINAR */
+.pedido-item button{
+    background:#ef4444;
+    margin-top:5px;
+}
+.btn-pdf{
+    width:90%;
+    max-width:320px;
+    display:block;
+    margin:10px auto;
+    background:#22c55e;
+    font-weight:bold;
+      text-align:center;
+}
+
+/* RESPONSIVE EXTRA (pantallas muy chicas) */
+@media (max-width:400px){
+
+    body{
+        font-size:13px;
+    }
+
+    .header{
+        font-size:16px;
+    }
+
+    input, select, button{
+        font-size:12px;
+        padding:5px;
+    }
+
+    .producto input{
+        width:50px;
+    }
+     }
+     select{
+    max-width: 140px;   /*  más corto */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.buscador{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+     align-items:center;
+}
+
+.buscador input{
+    width:90%;
+    position: relative;
+}
+
+.buscador select{
+    width:90%;
+    max-width:140px; /* sigue siendo corto */
+}
+
+.buscador button{
+    width:90%;
+}
+.fila-controles{
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+.fila-controles select{
+    max-width:120px;
+    font-size:12px;
+}
+
+.fila-controles input{
+    width:55px;
+    text-align:center;
+}
+
+.fila-controles button{
+    padding:5px 8px;
+    background:#22c55e;
+}
+.fila-filtros{
+    display:flex;
+    gap:5px;
+    width:100%;
+}
+
+.fila-filtros select{
+    flex:1;              /* los 3 ocupan el mismo espacio */
+    min-width:0;         /*  evita que uno se baje */
+    font-size:12px;
+    padding:6px;
+}v
+#resultados{
+    display:flex;
+    flex-direction:column;
+    align-items:center; /*  centra todas las tarjetas */
+}
+.pedido h3{
+    text-align:center;
+    margin-bottom:10px;
+}
+input, select{
+    background:white;
+    color:black;
+    border:1px solid #ccc;
+}
+.stock-mini{
+    font-size:12px;
+    padding:4px 6px;
+    background:#f3f4f6;
+    border-radius:6px;
+    min-width:60px;
+    text-align:center;
+}
+#toast{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    
+    background: rgba(0,0,0,0.7);
+    color: white;
+    
+    padding: 15px 25px;
+    border-radius: 12px;
+    
+    font-size: 16px;
+    text-align: center;
+    
+    opacity: 0;
+    pointer-events: none;
+    
+    transition: all 0.3s ease;
+    z-index: 9999;
+}
+
+#toast.show{
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+</style>
+</head>
+
+<body>
+<div id="toast"></div>
+ 
+    <header class="topbar">
+     <div class="logo">
+        <img src="imagenes/fondo3.png" alt="Logo Ferreteria Mono" class="logo-img">
+         <span>Ferreteria La Candelaria</span>
+    </div>
+
+    <div class="menu-btn" onclick="toggleMenu(event)">☰</div>
+</header>
+
+<!-- MENU -->
+<div class="side-menu" id="menu">
+    <button onclick="irAFacturar()">Facturar</button>
+  <button onclick="irAVentas()">Ventas</button>
+   <button onclick="irAStock()">Stock</button>
+<button onclick="irAEstadisticas()">Estadística</button>
+       <button class="solo-admin" onclick="irAUsuarios()">Lista de Usuarios</button>
+<button class="solo-admin" onclick="irACrearUsuario()">Crear Usuario</button>
+<button onclick="irAInventario()">Inventario</button>
+<button onclick="irATicket()">Ticket Imp</button>
+       <button class="btn-volver" onclick="volverInicio()">← Inicio</button>
+
+  
+</div>
+
+<div class="header">📦 GENERAR PEDIDOS</div>
+
+<div class="container">
+
+    <!-- BUSCAR -->
+<div class="buscador">
+    <input id="buscar" placeholder="Buscar producto o código">
+
+    <!--  FILA DE FILTROS -->
+    <div class="fila-filtros">
+        <select id="proveedorFiltro">
+            <option value="">Proveedor</option>
+        </select>
+
+        <select id="rubroFiltro">
+            <option value="">Rubro</option>
+        </select>
+
+      <select id="stockFiltro">
+    <option value="">Stock</option>
+</select>
+    </div>
+
+    <button onclick="buscarProductos()">Buscar</button>
+</div>
+    <!-- RESULTADOS -->
+    <div id="resultados"></div>
+
+    <!-- PEDIDO -->
+   <div class="pedido">
+    <h3>🧾 Pedido actual</h3>
+
+    
+    <h4 id="proveedor-actual"></h4>
+
+    <div id="lista-pedido"></div>
+
+    <button onclick="generarPDF()">📄 Generar Pedido PDF</button>
+</div>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script src="sql-wasm.js"></script>
+<script src="html5-qrcode.min.js"></script>
+
+<script src="pedidos.js"></script>
+<div class="overlay"></div>
+
+</body>
+</html>

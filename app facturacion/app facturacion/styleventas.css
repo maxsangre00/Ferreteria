@@ -1,0 +1,142 @@
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+.container{
+    padding:20px;
+}
+
+h1{
+    margin-bottom:15px;
+}
+
+.filtros{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:15px;
+}
+.filtros input{
+    width: 120px;
+    padding: 5px 8px;   /* más bajos */
+    height: 23px;       /* controla altura exacta */
+    font-size: 13px;
+    border-radius: 6px;
+}
+
+input, select{
+    padding:6px 8px;
+    border-radius:6px;
+    border:none;
+    outline:none;
+    font-size: 12px;
+}
+
+button{
+    padding:10px;
+    border:none;
+    border-radius:6px;
+    background:#22c55e;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#16a34a;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+    background:#dfe1e6;
+}
+
+th, td{
+    padding:10px;
+    border-bottom:1px solid #334155;
+    text-align:left;
+}
+
+th{
+    background:#caccd0;
+}
+
+.acciones{
+    display:flex;
+    gap:10px;
+}
+.logo-menu{
+    display: flex;
+    align-items: flex-start; /* lo sube hacia arriba */
+    gap: 40px; /* separa logo y texto */
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.logo-menu span{
+    position: relative;
+    top: 10px; /* lo sube un poco */
+   color:#0ea5e9;
+} 
+.logo-menu img{
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    margin-top: 2px; /* ayuda a ajustar vertical */
+}
+.fila{
+    display:flex;
+    gap:10px;
+}
+.fila-venta {
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.fila-venta:hover {
+    background: #5d7698;
+}
+.filtros select{
+    height: 10px;
+    padding: 3px 18px;
+    width: 120px;      /*  ancho fijo */
+    padding: 5px 8px;
+    height: 24px;
+    font-size: 11px;
+}
+.fila input,
+.fila select{
+    flex:1;
+    max-width:180px;   /*  ancho controlado */
+    padding:6px 8px;   /*  menos alto */
+    border-radius:6px;
+    border:none;
+}
+
+/* BOTÓN */
+
+.fila-boton{
+   justify-content: center;
+    position: relative;
+    left: 60px; /*  ajustá este valor */
+}
+.fila-boton button{
+    width: 180px;   /*largo*/
+    text-align: center;
+      padding: 5px 10px;   /* menos alto */
+    font-size: 13px;     /*  texto un poco más chico */
+    border-radius: 6px;
+}
+h1{
+    text-align: center;
+  
+}
+.container h1{
+    text-align: center;
+    margin-top: -20px;   /*  lo sube */
+      
+}

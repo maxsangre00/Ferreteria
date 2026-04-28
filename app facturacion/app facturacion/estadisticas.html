@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Estadísticas</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+    font-family: Arial;
+    margin:0;
+    background:#f5f5f5;
+}
+canvas{
+    display:block;
+    max-height:250px;
+}
+
+.header{
+    background:#111;
+    color:white;
+    text-align:center;
+    padding:12px;
+    font-size:18px;
+}
+
+.container{
+    padding:10px;
+}
+
+/* CARDS */
+.cards{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+}
+
+.card{
+    background:white;
+    padding:10px;
+    border-radius:10px;
+    text-align:center;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card h3{
+    margin:5px 0;
+    font-size:14px;
+}
+
+.card span{
+    font-size:18px;
+    font-weight:bold;
+}
+
+/* FILTRO */
+.filtro{
+    margin:10px 0;
+}
+
+select{
+    width:100%;
+    padding:8px;
+    border-radius:8px;
+}
+
+/* GRAFICOS */
+.grafico{
+    background:white;
+    margin-top:5px;
+    padding:10px;
+    border-radius:10px;
+}
+.filtro-fechas{
+    display:flex;
+    gap:5px;
+    margin-bottom:10px;
+}
+
+.filtro-fechas input{
+    flex:1;
+    padding:6px;
+}
+#heatmap{
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap:5px;
+    margin-top:10px;
+        margin-bottom:5px;
+}
+
+.dia{
+    padding:10px;
+    text-align:center;
+    border-radius:6px;
+    color:white;
+    font-size:12px;
+}
+.logo5{
+    display: flex;
+    align-items: center;
+    gap: 38px; /*  cerca del logo */
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.logo5 span{
+    margin-top: 10px; /*  lo baja suavemente */
+    color:#0ea5e9;
+}
+.logo5-img{
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    margin-top: 2px; /* ayuda a ajustar vertical */
+}
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px;
+    background:#111;
+    color:white;
+}
+
+.menu-btn{
+    font-size: 26px;
+    cursor: pointer;
+    color: #0ea5e9;
+    transition: 0.2s;
+    position: relative;
+        left: -5px;   /*  lo mueve un poco a la izquierda */
+    z-index: 1001; /* arriba del header */
+}
+.menu-btn.hidden{
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* MENU DERECHO */
+.side-menu{
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    width: 200px;
+    height: 100%;
+
+    background: #274895;
+
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+
+    box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.side-menu.open{
+    transform: translateX(0);
+}
+
+.side-menu button{
+    margin: 5px 0;
+    width: 100%;
+    padding: 10px;
+ margin-bottom: 5px;
+    background: linear-gradient(145deg,#0ea5e9,#1e40af);
+    border: none;
+    border-radius: 8px;
+
+    color: white;
+    font-weight: bold;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+    
+}
+
+.side-menu button:active{
+    transform: scale(0.95);
+}
+.overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.2s;
+    z-index: 998;
+}
+
+.overlay.active{
+    opacity: 1;
+    visibility: visible;
+}
+</style>
+</head>
+
+<body>
+<header class="topbar">
+    <div class="logo5">
+        <img src="imagenes/fondo3.png" alt="Logo Ferreteria Mono" class="logo5-img">
+         <span>Ferreteria La Candelaria</span>
+    </div>
+
+    <div class="menu-btn" onclick="toggleMenu(event)">☰</div>
+</header>
+
+<!-- MENU -->
+<div class="side-menu" id="menu">
+      <button onclick="irAFacturar()">Facturar</button>
+  <button onclick="irAVentas()">Ventas</button>
+   <button onclick="irAStock()">Stock</button>
+        <button onclick="irAPedidos()">Pedidos</button>
+<button class="solo-admin" onclick="irAUsuarios()">Lista de Usuarios</button>
+<button class="solo-admin" onclick="irACrearUsuario()">Crear Usuario</button>
+<button onclick="irAInventario()">Inventario</button>
+<button onclick="irATicket()">Ticket Imp</button>
+<button class="btn-volver" onclick="volverInicio()">← Volver</button>
+
+  
+</div>
+
+<div class="header">📊 Estadísticas</div>
+
+<div class="container">
+
+    <!-- FILTRO -->
+    <div class="filtro">
+        <select id="filtro">
+            <option value="dia">Hoy</option>
+            <option value="semana">Semana</option>
+            <option value="mes">Mes</option>
+            <option value="anio">Año</option>
+        </select>
+    </div>
+
+    <!-- CARDS -->
+    <div class="cards">
+        <div class="card">
+            <h3>Ventas</h3>
+            <span id="ventas">$0</span>
+        </div>
+
+        <div class="card">
+            <h3>Ganancia</h3>
+            <span id="ganancia">$0</span>
+        </div>
+    </div>
+
+    <div class="filtro-fechas">
+    <input type="date" id="desde">
+    <input type="date" id="hasta">
+    <button onclick="cargarRango()">Aplicar</button>
+</div>
+
+<div class="grafico">
+    <canvas id="graficoLinea"></canvas>
+</div>
+
+<h3>🏆 Días más fuertes</h3>
+<div id="heatmap"></div>
+
+<div id="alerta" style="margin-top:10px; font-weight:bold;"></div>
+
+<!-- GRAFICOS -->
+    
+
+    <div class="grafico">
+        <canvas id="graficoTop"></canvas>
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="estadisticas.js"></script>
+<div class="overlay"></div>
+
+</body>
+</html>

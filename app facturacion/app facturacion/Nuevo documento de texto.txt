@@ -1,0 +1,7 @@
+/build/
+/dist/
+/nbproject/private/
+/target/
+*.db
+*.jar
+*.class

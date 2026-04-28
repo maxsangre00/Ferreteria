@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ferreria La Candelaria</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<!--  HEADER -->
+<header class="topbar">
+    <div class="logo">
+        <img src="imagenes/fondo3.png" alt="Logo Ferreteria Mono" class="logo-img">
+         <span>Ferreteria La Candelaria</span>
+    </div>
+
+    <div class="menu-btn" onclick="toggleMenu(event)">☰</div>
+</header>
+
+<!-- MENU -->
+<div class="side-menu" id="menu">
+    <button onclick="irAFacturar()">Facturar</button>
+  <button onclick="irAVentas()">Ventas</button>
+   <button onclick="irAStock()">Stock</button>
+  <button onclick="irAEstadisticas()">Estadística</button>
+    <button onclick="irAPedidos()">Pedidos</button>
+<button class="solo-admin" onclick="irAUsuarios()">Lista de Usuarios</button>
+<button class="solo-admin" onclick="irACrearUsuario()">Crear Usuario</button>
+<button onclick="irAInventario()">Inventario</button>
+<button onclick="irATicket()">Ticket Imp</button>
+<button onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+
+  
+</div>
+
+<!-- CONTENIDO -->
+<div class="app">
+
+    <div class="grid-botones">
+       <button class="btn-pro" onclick="irAFacturar()">
+    <span>🧾</span>Facturar
+</button>
+
+<button class="btn-pro" onclick="irAVentas()">
+    <span>📦</span>Ventas
+</button>
+<button class="btn-pro" onclick="irAStock()">
+    <span>📦</span>Stock
+</button>
+       
+       <button class="btn-pro solo-admin" onclick="irACrearUsuario()">
+    <span>👤</span>Crear Usuario
+</button>
+
+        <button class="btn-pro" onclick="irAPedidos()">
+    <span>🛒</span>Pedidos
+</button>
+       <button class="btn-pro" onclick="irAEstadisticas()">
+    <span>📈</span>Estadística
+</button>
+       
+    </div>
+
+</div>
+<script src="sql-wasm.js"></script>
+<script src="html5-qrcode.min.js"></script>
+
+<!--  IMPORTANTE -->
+<script src="script.js" defer></script>
+
+<script>
+function mostrarSeccion(id){
+    document.querySelectorAll('.seccion').forEach(s => s.style.display='none');
+    const el = document.getElementById(id);
+    if(el) el.style.display='block';
+}
+window.onload = () => {
+    const user = JSON.parse(localStorage.getItem("usuario"));
+
+    if(user.rol !== "admin"){
+        document.querySelectorAll(".solo-admin").forEach(el => {
+            el.style.display = "none";
+        });
+    }
+};
+</script>
+<div class="overlay"></div>
+</body>
+</html>

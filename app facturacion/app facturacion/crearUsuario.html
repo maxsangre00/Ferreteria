@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crear Usuario</title>
+
+<style>
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color:rgb(114, 39, 39);
+}
+
+/* CONTENEDOR */
+.container{
+    max-width:400px;
+    margin:60px auto;
+    padding:25px;
+    border-radius:15px;
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.05);
+    box-shadow: 0 0 25px rgba(0,255,255,0.2);
+}
+
+/* TITULO */
+h2{
+    text-align:center;
+    margin-bottom:20px;
+    color:#00eaff;
+}
+
+/* INPUTS */
+input, select{
+    width:90%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:8px;
+    background: rgba(233, 226, 226, 0.1);
+    color:rgb(252, 255, 254);
+    outline:none;
+}
+
+/* BOTONES */
+.btn{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.crear{
+    background:#00eaff;
+    color:black;
+}
+
+.crear:hover{
+    box-shadow:0 0 15px #00eaff;
+}
+
+.cancelar{
+    background:#ff4b5c;
+    color:white;
+}
+
+.cancelar:hover{
+    box-shadow:0 0 15px #ff4b5c;
+}
+.toast{
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -60%) scale(0.95);
+
+    background: rgba(34, 197, 94, 0.25); /* más transparente */
+    backdrop-filter: blur(8px);
+
+    color: #ffffff;
+    padding: 12px 18px;
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+
+    opacity: 0;
+    transition: 0.25s ease;
+
+    z-index: 9999;
+    text-align: center;
+    min-width: 180px;
+}
+
+.toast.show{
+    opacity: 1;
+    transform: translate(-50%, -70%) scale(1);
+}
+select option{
+    background: #1e293b; /* oscuro */
+    color: white;
+}
+</style>
+</head>
+
+<body>
+    <div id="toast" class="toast"></div>
+
+<div class="container">
+     <input type="hidden" id="id_usuario">
+   
+<div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:10px;">
+    <img src="imagenes/fondo3.png" style="width:65px; height:65px; object-fit:contain;">
+    <h2 id="titulo" style="margin:0;">Crear Usuario</h2>
+</div>
+    <input type="text" id="nombre" placeholder="Nombre">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <input type="text" id="telefono" placeholder="Teléfono">
+
+    <select id="rol">
+        <option value="empleado">Empleado</option>
+        <option value="admin">Administrador</option>
+    </select>
+
+<button class="btn crear" id="btnGuardar" onclick="guardarUsuario()">Crear</button>  
+  <button class="btn cancelar" onclick="cancelar()">Cancelar</button>
+</div>
+
+
+<!-- SQLITE -->
+<script src="sql-wasm.js"></script>
+
+<script>
+    
+const user = JSON.parse(localStorage.getItem("usuario"));
+
+if(!user){
+    alert("Debes iniciar sesión");
+    window.location.href = "loguin.html";
+}
+
+let db;
+
+async function initDB(){
+    const SQL = await initSqlJs({
+        locateFile: file => 'sql-wasm.wasm'
+    });
+
+    const data = localStorage.getItem("db");
+    db = data ? new SQL.Database(new Uint8Array(JSON.parse(data))) : new SQL.Database();
+}
+
+function guardarDB(){
+    const data = db.export();
+    localStorage.setItem("db", JSON.stringify(Array.from(data)));
+}
+
+function guardarUsuario(){
+
+    const id = document.getElementById("id_usuario").value;
+    const nombre = document.getElementById("nombre").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const telefono = document.getElementById("telefono").value;
+    const rol = document.getElementById("rol").value;
+
+    const url = id 
+        ? "http://localhost:3000/editar-usuario"
+        : "http://localhost:3000/crear-usuario";
+
+    const body = id
+        ? { id, nombre, email, password, telefono, rol }
+        : { nombre, email, password, telefono, rol };
+
+    fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if(data.ok){
+
+            mostrarToast(id 
+                ? "✏️ Usuario actualizado"
+                : "✅ Usuario creado"
+            );
+
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 1200);
+
+        }else{
+            mostrarToast("❌ Error: " + data.error);
+        }
+
+    });
+}
+
+function mostrarToast(mensaje){
+    const toast = document.getElementById("toast");
+    toast.innerText = mensaje;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+
+window.onload = function(){
+
+    const u = localStorage.getItem("usuarioEditar");
+
+    if(u){
+        const editUser = JSON.parse(u);
+
+        document.getElementById("id_usuario").value = editUser.id;
+        document.getElementById("nombre").value = editUser.nombre;
+        document.getElementById("email").value = editUser.email;
+        document.getElementById("telefono").value = editUser.telefono;
+        document.getElementById("rol").value = editUser.rol;
+
+        document.getElementById("titulo").innerText = "✏️ Editar Usuario";
+        document.getElementById("btnGuardar").innerText = "Actualizar";
+
+        localStorage.removeItem("usuarioEditar");
+    }
+};
+
+function cancelar(){
+
+    const origen = localStorage.getItem("origen");
+
+    // limpiar
+    localStorage.removeItem("usuarioEditar");
+    localStorage.removeItem("origen");
+
+    if(origen === "lista"){
+        window.location.href = "listadoUsuarios.html";
+    }else{
+        window.location.href = "index.html";
+    }
+}
+
+initDB();
+</script>
+
+</body>
+</html>

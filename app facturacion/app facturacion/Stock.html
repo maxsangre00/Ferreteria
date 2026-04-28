@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="styleStock.css">
+<title>Stock - Ferretería La Candelaria</title>
+
+</head>
+
+<body>
+
+    <header class="topbar">
+    <div class="logo-s">
+        <img src="imagenes/fondo3.png" alt="Logo Ferreteria Mono" class="logo-img">
+         <span>Ferreteria La Candelaria</span>
+    </div>
+
+    <div class="menu-btn" onclick="toggleMenu(event)">☰</div>
+</header>
+
+<!-- MENU -->
+<div class="side-menu" id="menu">
+    <button onclick="irAFacturar()">Facturar</button>
+  <button onclick="irAVentas()">Ventas</button>
+   <button onclick="irAPedidos()">Pedidos</button>
+<button onclick="irAInventario()">Inventario</button>
+ <button onclick="irAEstadisticas()">Estadística</button>
+ <button class="solo-admin" onclick="irAUsuarios()">Lista de Usuarios</button>
+<button class="solo-admin" onclick="irACrearUsuario()">Crear Usuario</button>
+<button onclick="irATicket()">Ticket Imp</button>
+
+    <button class="btn-volver" onclick="volverInicio()">← Inicio</button>
+
+  
+</div>
+
+<div class="header">
+📦 STOCK DE PRODUCTOS
+</div>
+
+<div class="container">
+
+    <!-- 🔍 FILTROS -->
+    <div class="filters">
+
+        <input type="text" id="busqueda" placeholder="Nombre o cod. de barras">
+
+        <select id="categoria">
+            <option value="">Categoría</option>
+        </select>
+
+       
+
+        <input type="number" id="minPrecio" placeholder="Precio min">
+        <input type="number" id="maxPrecio" placeholder="Precio max">
+
+         <select id="proveedor">
+            <option value="">Proveedor</option>
+        </select>
+
+        <select id="stock">
+            <option value="">Stock</option>
+            <option value="bajo">Stock bajo</option>
+            <option value="alto">Stock alto</option>
+        </select>
+<div style="display:flex; justify-content:center;">
+    
+<!--   <div class="btn-container">
+    <button id="btn-buscar">Buscar</button>   -->
+</div>  
+
+</div>
+    </div>
+
+    <!-- 📋 TABLA -->
+  <table>
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Producto</th>
+            <th>Venta</th>
+            <th>Stock</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+
+    <tbody id="tabla-productos"></tbody>
+</table>
+
+</div>
+
+<div id="modal-editar" class="modal">
+    <div class="modal-content">
+        <h3>Editar Producto</h3>
+
+        <input type="hidden" id="edit-id">
+
+        <input type="text" id="edit-nombre" placeholder="Nombre">
+        <input type="text" id="edit-codigo" placeholder="Código">
+        <input type="number" id="edit-precio-compra" placeholder="Precio compra">
+        <input type="number" id="edit-precio-venta" placeholder="Precio venta">
+        <input type="number" id="edit-stock" placeholder="Stock">
+
+        <div style="margin-top:10px">
+            <button onclick="guardarProducto()">💾 Guardar</button>
+            <button onclick="cerrarModal()">❌ Cancelar</button>
+        </div>
+    </div>
+</div>
+<div id="toast" class="toast">
+    ✔ Guardado correctamente
+</div>
+
+<script src="sql-wasm.js"></script>
+<script src="html5-qrcode.min.js"></script>
+
+<!--  IMPORTANTE -->
+<script src="script.js" defer></script>
+<script src="stock.js"></script>
+<div class="overlay"></div>
+
+</body>
+</html>

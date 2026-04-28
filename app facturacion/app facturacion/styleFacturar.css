@@ -1,0 +1,71 @@
+body{
+    background: #ffffff;
+    color: #000;
+}
+.app-container{
+    background: #ffffff;
+    color: #000000;
+    border-radius: 12px;
+    padding: 15px;
+}
+#btn-finalizar{
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: white;
+
+    border: none;
+    border-radius: 10px;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+
+    transition: all 0.2s ease;
+}
+#btn-finalizar:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+#btn-finalizar:active{
+    transform: scale(0.98);
+}
+
+#barcode-input{
+    background: #000000;
+    color: #ffffff;
+
+    border: 1px solid #333;
+    border-radius: 8px;
+
+    padding: 10px;
+    outline: none;
+}
+
+/* placeholder (texto "Escribir nombre o código...") */
+#barcode-input::placeholder{
+    color: rgba(255,255,255,0.6);
+}
+#stop-scan{
+    background: #ef4444;
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 10px 15px;
+
+    font-weight: bold;
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+header h1{
+    text-align: center;
+    width: 100%;
+}

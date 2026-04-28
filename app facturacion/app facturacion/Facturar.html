@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferreteria La Candelaria</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="styleFacturar.css">
+
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="logo">
+        <img src="imagenes/fondo3.png" alt="Logo Ferreteria Mono" class="logo-img">
+         <span>Ferreteria La Candelaria</span>
+    </div>
+
+    <div class="menu-btn" onclick="toggleMenu(event)">☰</div>
+</header>
+
+<div class="side-menu" id="menu">
+  <button onclick="irAVentas()">Ventas</button>
+<button onclick="irAStock()">Stock</button>  
+<button onclick="irAEstadisticas()">Estadística</button>
+ <button onclick="irAPedidos()">Pedidos</button>
+   <button class="solo-admin" onclick="irAUsuarios()">Lista de Usuarios</button>
+<button class="solo-admin" onclick="irACrearUsuario()">Crear Usuario</button>
+<button onclick="irAInventario()">Inventario</button>
+   <button onclick="irATicket()">Ticket Imp</button>
+    <button class="btn-volver" onclick="volverInicio()">← Volver</button>
+</div>
+
+<div id="facturar" class="seccion">
+
+    <div class="app-container">
+        <header>
+            <h1>Nueva Factura</h1>
+            <span id="current-date"></span>
+        </header>
+
+        <section class="card">
+         <h3>Datos del Cliente</h3>
+
+<input type="text" id="cliente-nombre" list="clientes-lista" placeholder="Nombre del cliente">
+<datalist id="clientes-lista"></datalist>
+
+<input type="text" id="cliente-doc" placeholder="CUIT">
+        </section>
+
+        <section class="card">
+            <div class="barcode-wrapper">
+                <input type="text" id="barcode-input" list="sugerencias-productos" placeholder="Escribir nombre o código...">
+                <datalist id="sugerencias-productos"></datalist>
+                
+                <button class="btn-scan" id="start-scan">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2m-10 0H5a2 2 0 0 1-2-2v-2M7 12h10"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Contenedor del Escáner -->
+            <div id="reader-container" class="card" style="display: none;">
+                <div id="reader"></div>
+                <div class="scan-controls">
+                    <button class="btn-flash" id="toggle-flash">⚡</button>
+                    <button class="btn-main" id="stop-scan" >Cerrar Cámara</button>
+                </div>
+            </div>
+
+            <div class="item-list" id="lista-productos"></div>
+        </section>
+
+        <footer class="totals">
+            <div class="row"><span>Subtotal:</span><span id="subtotal">$0.00</span></div>
+            <div class="row total-row"><span>TOTAL:</span><span id="total">$0.00</span></div>
+            <button class="btn-main" id="btn-finalizar">Generar Factura</button>
+        </footer>
+      
+    </div>
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script src="html5-qrcode.min.js"></script>
+<script src="facturar.js"></script>
+<script src="script.js" defer></script>
+<div class="overlay"></div>
+
+</body>
+</html>
